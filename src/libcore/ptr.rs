@@ -194,9 +194,11 @@ unsafe fn swap_nonoverlapping_bytes(x: *mut u8, y: *mut u8, len: usize) {
     // Haswell E processors. LLVM is more able to optimize if we give a struct a
     // #[repr(simd)], even if we don't actually use this struct directly.
     //
-    // FIXME repr(simd) broken on emscripten and redox
+    // FIXME repr(simd) broken on emscripten and redox and macOS
     // It's also broken on big-endian powerpc64 and s390x.  #42778
+    // It's also broken on macOS 10.10.  #51794/#51758/#48866/#44056
     #[cfg_attr(not(any(target_os = "emscripten", target_os = "redox",
+                       target_os = "macos",
                        target_endian = "big")),
                repr(simd))]
     struct Block(u64, u64, u64, u64);
